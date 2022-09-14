@@ -1,0 +1,6 @@
+server {
+    listen 8071;
+
+    root /var/www/load-balacing/1/;
+    index index.php index.html index.htm;
+}

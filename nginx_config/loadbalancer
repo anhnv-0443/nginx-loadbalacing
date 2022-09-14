@@ -1,0 +1,24 @@
+upstream backend {
+    #ip_hash;
+    #hash $http_session_id consistent;
+    #least_conn
+    #random two least_conn;
+    
+    server 127.0.0.1:8075 weight=2 max_fails=3 fail_timeout=10s;
+    server 127.0.0.1:8074 max_fails=3 fail_timeout=10s;
+    server 127.0.0.1:8073 max_fails=3 fail_timeout=10s;
+    server 127.0.0.1:8072 max_fails=3 fail_timeout=10s;
+    server 127.0.0.1:8071 max_fails=3 fail_timeout=10s down;
+}
+
+server {
+    listen 9999;
+    listen [::]:9999;
+
+    location / {
+        proxy_next_upstream http_404;
+        proxy_pass http://backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $remote_addr;
+    }
+}
